@@ -1,0 +1,152 @@
+﻿@model List<HizliFaturalama.Models.Customer>
+<header>
+
+    <link href="~/css/site.css" rel="stylesheet" />
+</header>
+<h2>Fatura Oluştur</h2>
+<div class="container">
+    <form asp-action="CreateInvoicePost" method="post" class="invoice-form">
+        <div style="display:flex; justify-content: space-between; gap:24px;">
+            <div class="form-group">
+                <label>Fatura No</label>
+                <input type="text" id="InvoiceNumber" name="InvoiceNumber" readonly/>
+            </div>
+
+            <div class="form-group">
+                <label>Tarih</label>
+                <input type="text" value="@DateTime.Now.ToString("dd.MM.yyyy")" readonly />
+            </div>
+        </div>
+
+        <div class="form-group customer-display">
+            <div>
+                <label>Müşteri</label>
+                <input type="text" id="CustomerName" name="CustomerName" readonly />
+                <input type="hidden" id="CustomerId" name="CustomerId" />
+            </div>
+        </div>
+
+        <table id="invoceTable">
+            <thead>
+            <tr>
+                <th>Malzeme Adı</th>
+                <th>Birimi</th>
+                <th>Miktarı</th>
+                <th>Birim Fiyatı</th>
+                <th>Toplam Fiyat</th>
+                <th>İşlem</th>
+            </tr>
+            </thead>
+            <tbody id="invoiceItems"></tbody>
+        </table>
+
+        <div class="total-section">
+            <label>Fatura Toplamı</label>
+            <input type="text" id="invoiceTotal" name="Total" readonly style="width: 150px" />
+        </div>
+
+        <button type="submit">Kaydet</button>
+    </form>
+
+    <div class="right-sidebar">
+        <h4>Fatura Bilgileri</h4>
+        <div class="form-group">
+            <label>Fatura No</label>
+            <input type="text" id="sidebarInvoiceNumber" />
+        </div>
+
+        <div class="form-group">
+            <label>Müşteri</label>
+            <select id="customerSelect">
+                <option value="">--Müşteri Seçin--</option>
+                @foreach (var customer in Model)
+                {
+                    <option value="@customer.CustomerId" data-name="@customer.UserName">@customer.UserName</option>
+                }
+            </select>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #dee2e6; margin: 24px 0;">
+
+        <h4>Ürün Ekle</h4>
+        <div class="form-group">
+            <label>Adı</label>
+            <input type="text" id="itemName" name="itemName" />
+        </div>
+        <div class="form-group">
+            <label>Birimi</label>
+            <input type="text" id="itemUnit" name="itemUnit" />
+        </div>
+        <div class="form-group">
+            <label>Miktarı</label>
+            <input type="number" id="itemQty" name="itemQty" min="0" step="1" />
+        </div>
+        <div class="form-group">
+            <label>Birim Fiyatı</label>
+            <input type="number" id="itemPrice" name="itemPrice" min="0" step="10" />
+        </div>
+        <button type="button" id="addItem">Ürün Ekle</button>
+    </div>
+</div>
+
+<script>
+    window.itemIndex = 0;
+
+    document.getElementById("sidebarInvoiceNumber").addEventListener("input", function () {
+        document.getElementById("InvoiceNumber").value = this.value;
+    });
+
+    document.getElementById("customerSelect").addEventListener("change", function () {
+        const selected = this.options[this.selectedIndex];
+        document.getElementById("CustomerName").value = selected.getAttribute("data-name") || "";
+        document.getElementById("CustomerId").value = selected.value || "";
+    });
+
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll("#invoiceItems tr").forEach(row => {
+            const input = row.querySelector('input[name$=".TotalPrice"]');
+            const price = parseFloat(input?.value || 0);
+            total += price;
+        });
+        document.getElementById("invoiceTotal").value = total.toFixed(2);
+    }
+
+    document.getElementById("addItem").addEventListener("click", function (event) {
+
+            const name = document.getElementById("itemName").value;
+            const unit = document.getElementById("itemUnit").value;
+            const qty = parseFloat(document.getElementById("itemQty").value || 0);
+            const price = parseFloat(document.getElementById("itemPrice").value || 0);
+
+            if (!name || !unit || qty <= 0 || price <= 0) {
+                alert("Lütfen tüm alanları doldurun.");
+                event.preventDefault();
+                return;
+            }
+
+            const total = (qty * price).toFixed(2);
+
+            const rowHtml = `
+                <tr>
+                    <td><input type="hidden" name="Items[${window.itemIndex}].ItemName" value="${name}" />${name}</td>
+                    <td><input type="hidden" name="Items[${window.itemIndex}].Unit" value="${unit}" />${unit}</td>
+                    <td><input type="hidden" name="Items[${window.itemIndex}].Quantity" value="${qty}" />${qty}</td>
+                    <td><input type="hidden" name="Items[${window.itemIndex}].Price" value="${price}" />${price}</td>
+                    <td><input type="hidden" name="Items[${window.itemIndex}].TotalPrice" value="${total}" />${total}</td>
+                    <td><button type="button" class="delete-btn" hx-post="#" hx-target="this" hx-swap="delete" hx-confirm="Silmek istediğinizden emin misiniz?" hx-on::after-request="updateTotal()">Sil</button></td>
+                </tr>`;
+
+
+                document.getElementById("invoiceItems").insertAdjacentHTML("beforeend", rowHtml);
+
+                document.getElementById("itemName").value = "";
+                document.getElementById("itemUnit").value = "";
+                document.getElementById("itemQty").value = "";
+                document.getElementById("itemPrice").value = "";
+
+            updateTotal();
+            window.itemIndex++;
+
+    });
+</script>

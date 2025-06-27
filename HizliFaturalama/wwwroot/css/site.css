@@ -1,0 +1,144 @@
+﻿.container {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.invoice-form {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 24px;
+    width: 70%;
+}
+
+.invoice-form h2 {
+    color: #1a1a1a;
+    font-size: 24px;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.invoice-form h4 {
+    color: #333;
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.right-sidebar {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 24px;
+    width: 30%;
+}
+
+.right-sidebar h2 {
+    color: #1a1a1a;
+    font-size: 24px;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.right-sidebar h4 {
+    color: #333;
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+    }
+
+    input[readonly] {
+        background: #f5f5f5;
+        cursor: not-allowed;
+    }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+}
+
+th {
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+    button[type="submit"] {
+        background: #007bff;
+        color: white;
+    }
+
+        button[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+#addItem {
+    background: #28a745;
+    color: white;
+}
+
+    #addItem:hover {
+        background: #218838;
+    }
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+}
+
+    .delete-btn:hover {
+        background: #c82333;
+    }
+
+.total-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}

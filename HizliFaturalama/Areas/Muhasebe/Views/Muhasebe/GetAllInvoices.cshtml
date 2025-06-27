@@ -1,0 +1,90 @@
+﻿@model List<HizliFaturalama.Models.Invoice>
+
+<head>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Faturalar</h1>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fatura Numarası</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fatura Kesim Tarihi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="invoice-list">
+                    @if (Model is not null)
+                    {
+                        foreach (var invoice in Model)
+                        {
+                            <tr data-id="@invoice.InvoiceId">
+                                <td>@invoice.InvoiceNumber</td>
+                                <td>@invoice.RecordDate</td>
+                                <td>@invoice.TotalAmount</td>
+
+                                <td class="text-center">
+                                    <a href="/Muhasebe/GetInvoice/@invoice.InvoiceId" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 rounded me-2">
+                                        <i class="fas fa-eye me-1"></i> Görüntüle
+                                    </a>
+                                    <button class="bg-red-600 text-white px-2 py-1 rounded" onclick="openDeleteConfirmation('@invoice.InvoiceId', '@invoice.InvoiceNumber')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Silme Onay Modalı -->
+        <div id="delete-modal-container" class="hidden fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 transform transition-transform duration-300 scale-95">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Fatura Sil</h2>
+                    <button onclick="closeModal('delete-modal-container')" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="mb-6 text-gray-700">Bu faturayı silmek istediğinizden emin misiniz? <span id="delete-invoice-number" class="font-semibold"></span></p>
+                <div id="delete-error-message" class="hidden bg-red-100 text-red-700 p-3 rounded-md mb-6"></div>
+                <form hx-delete="/Muhasebe/DeleteInvoice" hx-target="#invoice-list" hx-swap="outerHTML">
+                    <input type="hidden" id="DeleteInvoiceId" name="InvoiceId" />
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('delete-modal-container')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md">İptal</button>
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md">Sil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+            function openDeleteConfirmation(invoiceId, InvoiceNo) {
+            const modal = document.getElementById('delete-modal-container');
+            document.getElementById('DeleteInvoiceId').value = invoiceId;
+            document.getElementById('delete-invoice-number').textContent = InvoiceNo;
+            document.getElementById('delete-error-message').classList.add('hidden');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('opacity-100', 'scale-100'), 10);
+        }
+
+                function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('opacity-100', 'scale-100');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+    </script>
+</body>

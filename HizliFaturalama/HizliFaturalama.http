@@ -1,0 +1,6 @@
+@HizliFaturalama_HostAddress = http://localhost:5160
+
+GET {{HizliFaturalama_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

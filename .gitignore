@@ -1,0 +1,81 @@
+## Build klasörleri
+bin/
+obj/
+out/
+Generated_Code/
+
+## User-specific dosyalar
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Mono Auto Generated Files
+mono_crash.*
+
+## Windows klasör dosyaları
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## Visual Studio klasörleri
+.vs/
+.vscode/
+
+## Paket yöneticisi
+packages/
+*.nupkg
+*.snupkg
+*.nuspec
+
+## dotCover
+.idea/
+*.dotCover
+
+## log dosyaları
+*.log
+
+## localdb ve veritabanı dosyaları
+*.mdf
+*.ldf
+*.dbmdl
+
+## Web çıktıları (önemli: wwwroot/lib/ genelde restore edilir)
+wwwroot/lib/
+
+## Kişisel ayar dosyaları
+*.sqlite
+*.sdf
+*.pidb
+
+## Rider
+.idea/
+*.sln.iml
+
+## ASP.NET Secret dosyası (isteğe bağlı, local'de kalmalı)
+secrets.json
+appsettings.*.json
+
+## MacOS sistem dosyaları
+.DS_Store
+
+## Node.js
+node_modules/
+
+## Test sonuçları
+TestResults/
+*.coverage
+*.coveragexml
+*.trx
+
+## Publish / paketleme çıktıları
+publish/
+*.Publish.xml
+
+## Diğer geçici dosyalar
+*.tmp
+*.temp
+*.bak
+*.old

@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.RegularExpressions;
 
 namespace HizliFaturalama.Controllers
 {
@@ -26,25 +27,58 @@ namespace HizliFaturalama.Controllers
             _userManager = userManager;
             _configuration = configuration;
         }
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterModel model)
         {
+
+            if (!ModelState.IsValid) {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage).ToList();
+                return UnprocessableEntity($"<div class='alert alert-danger'>{string.Join("<br>", errors)}</div>");
+            }
+            
+            var existingUserByUsername = await _userManager.FindByNameAsync(model.Username);
+            if (existingUserByUsername != null)
+            {
+                return UnprocessableEntity("<div class='alert alert-danger'>Bu kullanıcı adı zaten alınmış.</div>");
+            }
+
+            var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUserByEmail != null)
+            {
+                return UnprocessableEntity("<div class='alert alert-danger'>Bu e-posta adresi zaten kayıtlı.</div>");
+            }
+
             var user = new IdentityUser { UserName = model.Username, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                return Ok(new { Message = "Kullanıcı başarı ile oluşturuldu" });
+                var login = new LoginModel()
+                {
+                    Password = model.Password,
+                    Username = model.Username,
+                };
+                return await Login(login);
+
             }
-            return BadRequest();
+            var identityErrors = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest($"<div class='alert alert-danger'>{string.Join("<br>", identityErrors)}</div>");
         }
+
 
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
-
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.
+                    SelectMany(v=>v.Errors).
+                    Select(e => e.ErrorMessage).ToList();
+                return BadRequest($"<div class='alert alert-danger'>{string.Join("<br>", errors)}</div>");
+            }
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
@@ -74,14 +108,15 @@ namespace HizliFaturalama.Controllers
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddMinutes(30)
                 });
+               
 
                 // HTMX destekli redirect yanıtı
                 Response.Headers.Add("HX-Redirect", "/Muhasebe/Muhasebe/CreateInvoice");
-                return Ok();
+                return Ok("<div class='alert alert-success'>Giriş başarılı! Yönlendiriliyorsunuz...</div>");
 
             }
 
-            return Unauthorized(new { Message = "Yanlış kullanıcı adı veya şifre" });
+            return Unauthorized("<div class='alert alert-danger'>Yanlış kullanıcı adı veya şifre</div>");
         }
 
         [HttpPost]
@@ -91,7 +126,6 @@ namespace HizliFaturalama.Controllers
 
             Response.Cookies.Delete("jwt_token");
             return Redirect("/index.html"); // index sayfası wwwroot'un altında olduğu için yönlendirmeyi bu şekilde yaparız
-
 
         }
 

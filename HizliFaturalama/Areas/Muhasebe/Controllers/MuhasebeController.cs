@@ -71,14 +71,17 @@ namespace HizliFaturalama.Areas.Muhasebe.Controllers
             if (ModelState.IsValid) {
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                //Guid guidId = Guid.Parse(userId); 
-                var command = new CreateCustomer.Command(model);
+                var command = new CreateCustomer.Command(model, userId);
 
                 var response = await MediatR.Send(command);
-                if(response > 0)
+                if(response == 1)
                 {
                     Response.Headers.Add("HX-Redirect", "/Muhasebe/Muhasebe/ManageCustomer");
                     return Ok();
+                }
+                else if (response == 2)
+                {
+                    return BadRequest("<div class='bg-red-100 text-red-700 p-3 rounded-md'>Bu e-mail adresi ile kayıtlı müşteri bulunmaktadır. Yeni bir e-mail adresi giriniz.</div>");
                 }
                 else
                 {

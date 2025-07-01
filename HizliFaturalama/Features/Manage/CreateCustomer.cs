@@ -8,7 +8,7 @@ namespace HizliFaturalama.Features.Manage
     public class CreateCustomer
     {
 
-        public record Command(CreateCustomerVm model) : IRequest<int>;
+        public record Command(CreateCustomerVm model, String UserId) : IRequest<int>;
         public class Handler(IDbContextFactory<HizliFaturaDbContext> context) : IRequestHandler<Command, int>
         {
             public async Task<int> Handle(Command request, CancellationToken cancellationToken)
@@ -20,15 +20,16 @@ namespace HizliFaturalama.Features.Manage
                     throw new ArgumentNullException(nameof(ctx));
                 }
 
-                var customer = request.model;
-                if(ctx.Customers.Any(x=>x.Email == customer.Email.ToLower()))
+                var customers = ctx.Customers.Where(x => x.UserId == request.UserId).ToList();
+                if( customers.Any(x=>x.Email == request.model.Email.ToLower()))
                 {
-                    throw new InvalidOperationException("Bu e-mail adresi ile bir müşteri zaten kayıtlı.");
+                    return 2; /*Kullanıcı e-maili zaten kayıtlı olduğu için*/
                 }
 
+                var customer = request.model;
                 var newCustomer = new Customer()
                 {
-                    UserId = Guid.Parse("7122b34b-26d3-4363-9ffd-a4fc998c1df3").ToString(),
+                    UserId = request.UserId,
                     UserName = customer.UserName,
                     Email = customer.Email,
                     TaxNumber = customer.TaxNumber,

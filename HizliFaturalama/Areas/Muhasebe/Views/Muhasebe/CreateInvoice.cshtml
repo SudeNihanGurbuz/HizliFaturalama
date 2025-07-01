@@ -5,7 +5,7 @@
 </header>
 <h2>Fatura Oluştur</h2>
 <div class="container">
-    <form asp-action="CreateInvoicePost" method="post" class="invoice-form">
+    <form asp-action="CreateInvoicePost" method="post" class="invoice-form" onsubmit="return validateForm()">
         <div style="display:flex; justify-content: space-between; gap:24px;">
             <div class="form-group">
                 <label>Fatura No</label>
@@ -134,7 +134,7 @@
                     <td><input type="hidden" name="Items[${window.itemIndex}].Quantity" value="${qty}" />${qty}</td>
                     <td><input type="hidden" name="Items[${window.itemIndex}].Price" value="${price}" />${price}</td>
                     <td><input type="hidden" name="Items[${window.itemIndex}].TotalPrice" value="${total}" />${total}</td>
-                    <td><button type="button" class="delete-btn" hx-post="#" hx-target="this" hx-swap="delete" hx-confirm="Silmek istediğinizden emin misiniz?" hx-on::after-request="updateTotal()">Sil</button></td>
+                    <td><button type="button" class="delete-btn" onclick="DeleteRow(this)" >Sil</button></td>
                 </tr>`;
 
 
@@ -149,4 +149,31 @@
             window.itemIndex++;
 
     });
+
+
+    function DeleteRow(button){
+    if(confirm("Silmek istediğinize emin misiniz?")){
+        button.closest("tr").remove();
+        updateTotal();}
+    }
+
+    function validateForm(){
+        const customerId = document.getElementById("CustomerId").value;
+        const invoicenumber = document.getElementById("InvoiceNumber").value;
+        const items = document.querySelectorAll("#invoiceItems tr").length;
+        if(!customerId){
+            alert("Lütfen bir müşteri seçin.");
+            return false;
+        }
+        if(!invoicenumber){
+            alert("Lütfen fatura numarası giriniz.")
+            return false;
+        }
+        if(items === 0){
+            alert("Lütfen faturalanacak en az bir ürün ekleyin.");
+            return false;
+        }
+
+        return true;
+    }
 </script>

@@ -8,6 +8,7 @@ namespace HizliFaturalama.ViewModels
         [Required]
         public string UserName { get; set; }
 
+
         [Required]
         public string TaxNumber { get; set; }
 

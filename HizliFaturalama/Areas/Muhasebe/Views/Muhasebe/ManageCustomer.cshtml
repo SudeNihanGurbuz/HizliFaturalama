@@ -27,7 +27,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="customer-list" hx-get="/Muhasebe/ManageCustomer" hx-trigger="load, customerAdded, customerUpdated">
+                <tbody class="bg-white divide-y divide-gray-200" id="customer-list" hx-trigger="load, customerAdded, customerUpdated">
                     @if (Model is not null)
                     {
                         foreach (var customer in Model)
@@ -64,32 +64,42 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <form hx-post="/Muhasebe/CreateCustomer" hx-target="#add-modal-container" hx-swap="outerHTML">
+                <form hx-post="/Muhasebe/CreateCustomer"
+                      hx-target="#add-error-message"
+                      hx-swap="innerHTML">
+
                     <div id="add-error-message" class="hidden bg-red-100 text-red-700 p-3 rounded-md mb-6"></div>
+
                     <div class="mb-5">
                         <label for="UserName" class="block text-sm font-medium text-gray-700 mb-2">Kullanıcı Adı<span class="text-red-500">*</span></label>
                         <input type="text" id="UserName" name="UserName" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="TaxNumber" class="block text-sm font-medium text-gray-700 mb-2">Vergi Numarası<span class="text-red-500">*</span></label>
                         <input type="text" id="TaxNumber" name="TaxNumber" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="Title" class="block text-sm font-medium text-gray-700 mb-2">Başlık<span class="text-red-500">*</span></label>
                         <input type="text" id="Title" name="Title" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="Address" class="block text-sm font-medium text-gray-700 mb-2">Adres<span class="text-red-500">*</span></label>
                         <input type="text" id="Address" name="Address" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="Email" class="block text-sm font-medium text-gray-700 mb-2">E-posta <span class="text-red-500">*</span></label>
                         <input type="email" id="Email" name="Email" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="PhoneNumber" class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
                         <input type="tel" id="PhoneNumber" name="PhoneNumber" class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
+
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeModal('add-modal-container')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md">İptal</button>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Kaydet</button>
@@ -110,30 +120,38 @@
                 <form hx-post="/Muhasebe/UpdateCustomer" hx-target="#edit-modal-container" hx-swap="outerHTML">
                     <input type="hidden" id="EditCustomerId" name="CustomerId" />
                     <div id="edit-error-message" class="hidden bg-red-100 text-red-700 p-3 rounded-md mb-6"></div>
+
                     <div class="mb-5">
                         <label for="EditUserName" class="block text-sm font-medium text-gray-700 mb-2">Kullanıcı Adı<span class="text-red-500">*</span></label>
                         <input type="text" id="EditUserName" name="UserName" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="EditTitle" class="block text-sm font-medium text-gray-700 mb-2">Başlık<span class="text-red-500">*</span></label>
                         <input type="text" id="EditTitle" name="Title" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="EditTaxNumber" class="block text-sm font-medium text-gray-700 mb-2">Vergi Numarası<span class="text-red-500">*</span></label>
                         <input type="text" id="EditTaxNumber" name="TaxNumber" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="EditEmail" class="block text-sm font-medium text-gray-700 mb-2">E-posta <span class="text-red-500">*</span></label>
                         <input type="email" id="EditEmail" name="Email" class="w-full border-gray-300 rounded-md shadow-sm" required>
+                        <div class="invalid-feedback">Email gereklidir.</div>
                     </div>
+
                     <div class="mb-5">
                         <label for="EditAddress" class="block text-sm font-medium text-gray-700 mb-2">Adres <span class="text-red-500">*</span></label>
                         <input type="text" id="EditAddress" name="Address" class="w-full border-gray-300 rounded-md shadow-sm" required>
                     </div>
+
                     <div class="mb-5">
                         <label for="EditPhoneNumber" class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
                         <input type="tel" id="EditPhoneNumber" name="PhoneNumber" class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
+
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeModal('edit-modal-container')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md">İptal</button>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Güncelle</button>
@@ -169,6 +187,21 @@
             const modal = document.getElementById('add-modal-container');
             modal.classList.remove('hidden');
             setTimeout(() => modal.classList.add('opacity-100', 'scale-100'), 10);
+
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+
+            const errorMessage = document.getElementById('add-error-message');
+            if (errorMessage) {
+                errorMessage.innerHTML = '';
+                errorMessage.classList.add('hidden');
+            }
+
+            const resultDiv = document.getElementById('result');
+            if (resultDiv) {
+                resultDiv.innerHTML = '';
+                resultDiv.style.display = 'none';
+            }
         }
 
         function openEditModal(customerId, userName, title, taxNumber, email, address, phoneNumber) {
@@ -202,31 +235,61 @@
         }
 
         document.body.addEventListener('htmx:afterRequest', function (evt) {
-            const elt = evt.detail.elt;
-            if (elt.getAttribute('hx-post') === '/Muhasebe/CreateCustomer' && evt.detail.successful) {
+           const elt = evt.detail.elt;
+           const xhr = evt.detail.xhr;
+           const resultDiv = document.getElementById('result');
+
+            if (elt.getAttribute('hx-post') === '/Muhasebe/CreateCustomer') {
+            const errorMessage = document.getElementById('add-error-message');
+            if (evt.detail.successful) {
                 closeModal('add-modal-container');
                 htmx.trigger('#customer-list', 'customerAdded');
-            } else if (elt.getAttribute('hx-post') === '/Muhasebe/CreateCustomer') {
-                const errorMessage = document.getElementById('add-error-message');
-                errorMessage.textContent = 'Lütfen tüm zorunlu alanları doldurun.';
-                errorMessage.classList.remove('hidden');
+            } else {
+                if (errorMessage) {
+                    errorMessage.innerHTML = xhr.responseText;
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.innerHTML = '';
+                        errorMessage.classList.add('hidden');
+                    }, 15000);
+                }
             }
-            if (elt.getAttribute('hx-post') === '/Muhasebe/UpdateCustomer' && evt.detail.successful) {
+        }
+
+        if (elt.getAttribute('hx-post') === '/Muhasebe/UpdateCustomer') {
+            const errorMessage = document.getElementById('edit-error-message');
+            if (evt.detail.successful) {
                 closeModal('edit-modal-container');
                 htmx.trigger('#customer-list', 'customerUpdated');
-            } else if (elt.getAttribute('hx-post') === '/Muhasebe/UpdateCustomer') {
-                const errorMessage = document.getElementById('edit-error-message');
-                errorMessage.textContent = 'Güncelleme başarısız. Lütfen tüm zorunlu alanları kontrol edin.';
-                errorMessage.classList.remove('hidden');
+            } else {
+                if (errorMessage) {
+                    errorMessage.innerHTML = xhr.responseText;
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.innerHTML = '';
+                        errorMessage.classList.add('hidden');
+                    }, 15000);
+                }
             }
-            if (elt.getAttribute('hx-delete') === '/Muhasebe/DeleteCustomer' && evt.detail.successful) {
+        }
+
+        if (elt.getAttribute('hx-delete') === '/Muhasebe/DeleteCustomer') {
+            const errorMessage = document.getElementById('delete-error-message');
+            if (evt.detail.successful) {
                 closeModal('delete-modal-container');
                 htmx.trigger('#customer-list', 'customerUpdated');
-            } else if (elt.getAttribute('hx-delete') === '/Muhasebe/DeleteCustomer') {
-                const errorMessage = document.getElementById('delete-error-message');
-                errorMessage.textContent = 'Silme işlemi başarısız.';
-                errorMessage.classList.remove('hidden');
+            } else {
+                if (errorMessage) {
+                    errorMessage.innerHTML = xhr.responseText;
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.innerHTML = '';
+                        errorMessage.classList.add('hidden');
+                    }, 15000);
+                }
             }
+        }
+
         });
     </script>
 </body>
